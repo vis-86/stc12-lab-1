@@ -1,0 +1,6 @@
+out/
+db-folder/
+.idea/
+*.ipr
+*.iws
+*.iml
