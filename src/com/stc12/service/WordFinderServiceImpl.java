@@ -18,13 +18,15 @@ public class WordFinderServiceImpl implements SentenceApplyService {
   private String getFoundSentence(String uri, String[] searchWord) {
     StringBuilder result = new StringBuilder();
     StringBuffer buffer = new StringBuffer();
+
     boolean isUrl = uri.trim().indexOf("http") == 0 || uri.trim().indexOf("ftp") == 0;
+
     try (InputStream fis = isUrl ? new URL(uri).openStream() : new FileInputStream(uri);
         InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
         Reader in = new BufferedReader(isr)) {
       int ch;
       while ((ch = in.read()) > -1) {
-        String ch1 = String.valueOf((char) ch);
+        char ch1 = (char) ch;
         buffer.append(ch1);
         if (containEndOfSentence(ch1)) {
           if (searchWord(buffer, searchWord)) {
@@ -49,8 +51,8 @@ public class WordFinderServiceImpl implements SentenceApplyService {
     stringBuffer.delete(0, stringBuffer.length());
   }
 
-  private boolean containEndOfSentence(String source) {
-    return source.contains(".") || source.contains("!") || source.contains("?");
+  private boolean containEndOfSentence(char source) {
+    return source == '.' || source == '!' || source == '?';
   }
 
   private boolean searchWord(StringBuffer text, String[] words) {

@@ -16,6 +16,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public class OccurrenceServiceImpl implements OccurrenceService {
+
+  public static final int N_THREADS = 10;
+
   @Override public void getOccurrences(String[] sources, String[] words, String res) {
     createDirectoryIfNotExists(res);
     persistOccurrencesIntoResource(sources, words, res);
@@ -35,7 +38,7 @@ public class OccurrenceServiceImpl implements OccurrenceService {
 
   private void persistOccurrencesIntoResource(String[] sources, String[] words, String res) {
     SentenceApplyService sentenceApplyService = new WordFinderServiceImpl();
-    ExecutorService threadPool = Executors.newFixedThreadPool(10);
+    ExecutorService threadPool = Executors.newFixedThreadPool(N_THREADS);
     List<Future<String>> futures = new ArrayList<>();
 
     long start = System.currentTimeMillis();

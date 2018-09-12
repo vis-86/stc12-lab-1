@@ -6,6 +6,7 @@ class ProgressPrinterThread extends Thread {
   private final AtomicBoolean atomicBoolean;
 
   public ProgressPrinterThread(AtomicBoolean atomicBoolean) {
+    super("ProgressPrinterThread");
     this.atomicBoolean = atomicBoolean;
   }
 
