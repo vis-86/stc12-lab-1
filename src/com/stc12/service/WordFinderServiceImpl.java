@@ -1,5 +1,7 @@
 package com.stc12.service;
 
+import org.apache.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,7 +13,10 @@ import java.nio.charset.StandardCharsets;
 
 public class WordFinderServiceImpl implements SentenceApplyService {
 
+  final static Logger LOGGER = Logger.getLogger(WordFinderServiceImpl.class);
+
   @Override public String apply(String uri, String[] searchWord) {
+    LOGGER.debug("Apply " + uri);
     return getFoundSentence(uri, searchWord);
   }
 
@@ -20,7 +25,7 @@ public class WordFinderServiceImpl implements SentenceApplyService {
     StringBuffer buffer = new StringBuffer();
 
     boolean isUrl = uri.trim().indexOf("http") == 0 || uri.trim().indexOf("ftp") == 0;
-
+    LOGGER.debug("Is Url: " + isUrl);
     try (InputStream fis = isUrl ? new URL(uri).openStream() : new FileInputStream(uri);
         InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
         Reader in = new BufferedReader(isr)) {
@@ -37,7 +42,7 @@ public class WordFinderServiceImpl implements SentenceApplyService {
         }
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      LOGGER.error(e.getMessage());
     }
 
     return result.toString();

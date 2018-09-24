@@ -1,5 +1,7 @@
 package com.stc12.service;
 
+import org.apache.log4j.Logger;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -17,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 public class OccurrenceServiceImpl implements OccurrenceService {
 
+  final static Logger LOGGER = Logger.getLogger(OccurrenceServiceImpl.class);
   public static final int N_THREADS = 10;
 
   @Override public void getOccurrences(String[] sources, String[] words, String res) {
@@ -32,11 +35,18 @@ public class OccurrenceServiceImpl implements OccurrenceService {
         Files.createFile(path);
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      LOGGER.error(e.getMessage());
     }
   }
 
   private void persistOccurrencesIntoResource(String[] sources, String[] words, String res) {
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("\n\n==== Params ==== \nSource size: " + sources.length
+          + "\nResult file path: " + res
+          + "\nSearching words: " + String.join(",", words) + "\n"
+          + "==== End Params ====\n"
+      );
+    }
     SentenceApplyService sentenceApplyService = new WordFinderServiceImpl();
     ExecutorService threadPool = Executors.newFixedThreadPool(N_THREADS);
     List<Future<String>> futures = new ArrayList<>();
@@ -53,11 +63,11 @@ public class OccurrenceServiceImpl implements OccurrenceService {
         outputStream.write(line.get().getBytes());
       }
     } catch (IOException | InterruptedException | ExecutionException e) {
-      e.printStackTrace();
+      LOGGER.error(e.getMessage());
     }
     threadPool.shutdown();
     long timeExecution = System.currentTimeMillis() - start;
-    System.out.println("\rВремя " + timeExecution + " ms (" + readableTime(timeExecution) + ")");
+    LOGGER.info("\rВремя " + timeExecution + " ms (" + readableTime(timeExecution) + ")");
   }
 
 

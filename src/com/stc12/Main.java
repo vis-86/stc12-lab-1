@@ -1,6 +1,8 @@
 package com.stc12;
 
 import com.stc12.service.OccurrenceServiceImpl;
+import com.stc12.service.WordFinderServiceImpl;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,19 +10,24 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Main {
 
+  final static Logger LOGGER = Logger.getLogger(WordFinderServiceImpl.class);
+
   public static final String RESULT_RESOURCE = "test/result/result.txt";
 
   public static void main(String[] args) {
+    LOGGER.info("App is started");
     AtomicBoolean isInProgress = new AtomicBoolean(true);
     new Thread(() -> {
-      new OccurrenceServiceImpl()
-          .getOccurrences(
-              getSources(),
-              new String[]{"main"},
-              RESULT_RESOURCE);
+      new OccurrenceServiceImpl().getOccurrences(
+          getSources(),
+          new String[]{"main", "then", "ok"},
+          RESULT_RESOURCE);
       isInProgress.set(false);
     }).start();
-    new ProgressPrinterThread(isInProgress).start();
+
+    if (!LOGGER.isDebugEnabled()) {
+      new ProgressPrinterThread(isInProgress).start();
+    }
   }
 
   private static String[] getSources() {
