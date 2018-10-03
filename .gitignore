@@ -1,0 +1,9 @@
+.gradle/
+out/
+production/
+db-folder/
+test/result/
+.idea/
+*.ipr
+*.iws
+*.iml
