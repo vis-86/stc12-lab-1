@@ -25,4 +25,4 @@ cache:
 
 script:
   - ./gradlew assemble
-  - ./gradlew test --rerun-tasks
+  - ./gradlew check --rerun-tasks
