@@ -30,13 +30,13 @@ class SentenceApplyServiceTest {
   }
 
   @Test
-  void testEmptyResult() throws Exception {
+  void testEmptyResult() {
     String empty = sentenceApplyService.apply(resource.getPath(), new String[]{});
     Assertions.assertEquals(0, empty.length());
   }
 
   @Test
-  void testNullParams() throws Exception {
+  void testNullParams() {
     Assertions.assertThrows(IllegalArgumentException.class,
         () -> sentenceApplyService.apply(null, new String[]{}));
   }

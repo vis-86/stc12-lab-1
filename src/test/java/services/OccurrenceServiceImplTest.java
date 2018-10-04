@@ -31,19 +31,19 @@ class OccurrenceServiceImplTest {
     File file = new File(res);
     String text = "text";
     Mockito.when(applyServiceMock.apply(Mockito.any(), Mockito.any())).thenReturn(text);
-    Assertions.assertDoesNotThrow(() -> {
-      occurrenceService.getOccurrences(
-          new String[]{"source1", "source2"},
-          new String[]{"word1", "word2"},
-          res
-      );
-    });
+    Assertions.assertDoesNotThrow(() ->
+        occurrenceService.getOccurrences(
+            new String[]{"source1", "source2"},
+            new String[]{"word1", "word2"},
+            res
+        )
+    );
 
     Assertions.assertTrue(file.exists(), res + " not found");
 
     StringBuilder content = new StringBuilder();
-    String line;
     try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+      String line;
       while ((line = reader.readLine()) != null) {
         content.append(line);
       }
