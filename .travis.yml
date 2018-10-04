@@ -23,6 +23,14 @@ cache:
   - $HOME/.gradle/caches/
   - $HOME/.gradle/wrapper/
 
+addons:
+  sonarcloud:
+    organization: $SONARCLOUD_ORGANIZATION
+    token:
+      secure: $SONARCLOUD_TOKEN
+
 script:
   - ./gradlew assemble
   - ./gradlew check --rerun-tasks
+  - sonar-scanner
+  - rm -rf .scannerwork
