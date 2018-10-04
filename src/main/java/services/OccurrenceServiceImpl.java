@@ -13,16 +13,37 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public class OccurrenceServiceImpl implements OccurrenceService {
 
   final static Logger LOGGER = Logger.getLogger(OccurrenceServiceImpl.class);
-  public static final int N_THREADS = 10;
+  private SentenceApplyService sentenceApplyService;
+  private ExecutorService threadPool;
 
-  @Override public void getOccurrences(String[] sources, String[] words, String res) {
+  public OccurrenceServiceImpl(SentenceApplyService sentenceApplyService, ExecutorService threadPool) {
+    this.sentenceApplyService = sentenceApplyService;
+    this.threadPool = threadPool;
+  }
+
+  /**
+   * Get occurrences from source by words, and store founded in resource
+   * @param sources Places where we will search words (sources may be path to file or url)
+   * @param words Words
+   * @param res Resource in which we save the sentences found
+   * @throws OccurrenceServiceException
+   */
+  @Override public void getOccurrences(String[] sources, String[] words, String res) throws OccurrenceServiceException {
+    if (sources == null || sources.length == 0) {
+      throw new OccurrenceServiceException("Sources can not be empty");
+    }
+    if (words == null || words.length == 0) {
+      throw new OccurrenceServiceException("Searched words can not be empty");
+    }
+    if (res == null || res.isEmpty()) {
+      throw new OccurrenceServiceException("Resource can not be empty");
+    }
     createDirectoryIfNotExists(res);
     persistOccurrencesIntoResource(sources, words, res);
   }
@@ -47,10 +68,7 @@ public class OccurrenceServiceImpl implements OccurrenceService {
           + "==== End Params ====\n"
       );
     }
-    SentenceApplyService sentenceApplyService = new WordFinderServiceImpl();
-    ExecutorService threadPool = Executors.newFixedThreadPool(N_THREADS);
     List<Future<String>> futures = new ArrayList<>();
-
     long start = System.currentTimeMillis();
     for (String uri : sources) {
       if (uri == null) {
@@ -60,7 +78,7 @@ public class OccurrenceServiceImpl implements OccurrenceService {
     }
     try (OutputStream outputStream = new FileOutputStream(res)) {
       for (Future<String> line : futures) {
-        outputStream.write(line.get().getBytes());
+        outputStream.write((line.get() + "\n").getBytes());
       }
     } catch (IOException | InterruptedException | ExecutionException e) {
       LOGGER.error(e.getMessage());
