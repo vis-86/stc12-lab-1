@@ -1,5 +1,6 @@
 package services;
 
+import exceptions.OccurrenceServiceException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ class OccurrenceServiceImplTest {
   private String res;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     applyServiceMock = Mockito.mock(SentenceApplyService.class);
     executorServiceMock = Executors.newFixedThreadPool(1);
     occurrenceService = new OccurrenceServiceImpl(applyServiceMock, executorServiceMock);

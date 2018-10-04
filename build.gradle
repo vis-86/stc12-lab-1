@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'war'
     id 'idea' // optional (to generate IntelliJ IDEA project files)
+    id "org.sonarqube" version "2.6"
 }
 
 group 'com.stc12'

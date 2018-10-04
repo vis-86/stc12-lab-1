@@ -13,9 +13,15 @@ import java.nio.charset.StandardCharsets;
 
 public class WordFinderServiceImpl implements SentenceApplyService {
 
-  final static Logger LOGGER = Logger.getLogger(WordFinderServiceImpl.class);
+  private static final Logger LOGGER = Logger.getLogger(WordFinderServiceImpl.class);
 
   @Override public String apply(String uri, String[] searchWord) {
+    if (uri == null) {
+      throw new IllegalArgumentException("uri is required parameter");
+    }
+    if (searchWord == null) {
+      throw new IllegalArgumentException("searchWord is required parameter");
+    }
     LOGGER.debug("Apply " + uri);
     return getFoundSentence(uri, searchWord);
   }

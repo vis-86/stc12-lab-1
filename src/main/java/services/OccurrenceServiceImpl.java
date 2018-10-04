@@ -1,5 +1,6 @@
 package services;
 
+import exceptions.OccurrenceServiceException;
 import org.apache.log4j.Logger;
 
 import java.io.FileOutputStream;
@@ -18,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 public class OccurrenceServiceImpl implements OccurrenceService {
 
-  final static Logger LOGGER = Logger.getLogger(OccurrenceServiceImpl.class);
+  private static final Logger LOGGER = Logger.getLogger(OccurrenceServiceImpl.class);
   private SentenceApplyService sentenceApplyService;
   private ExecutorService threadPool;
 
@@ -29,9 +30,10 @@ public class OccurrenceServiceImpl implements OccurrenceService {
 
   /**
    * Get occurrences from source by words, and store founded in resource
+   *
    * @param sources Places where we will search words (sources may be path to file or url)
-   * @param words Words
-   * @param res Resource in which we save the sentences found
+   * @param words   Words
+   * @param res     Resource in which we save the sentences found
    * @throws OccurrenceServiceException
    */
   @Override public void getOccurrences(String[] sources, String[] words, String res) throws OccurrenceServiceException {
@@ -51,7 +53,7 @@ public class OccurrenceServiceImpl implements OccurrenceService {
   private void createDirectoryIfNotExists(String res) {
     try {
       Path path = Paths.get(res);
-      if (!Files.exists(path)) {
+      if (!path.toFile().exists()) {
         Files.createDirectories(path.getParent());
         Files.createFile(path);
       }
@@ -80,8 +82,11 @@ public class OccurrenceServiceImpl implements OccurrenceService {
       for (Future<String> line : futures) {
         outputStream.write((line.get() + "\n").getBytes());
       }
-    } catch (IOException | InterruptedException | ExecutionException e) {
+    } catch (IOException | ExecutionException e) {
       LOGGER.error(e.getMessage());
+    } catch (InterruptedException e) {
+      LOGGER.warn("Interrupted!", e);
+      Thread.currentThread().interrupt();
     }
     threadPool.shutdown();
     long timeExecution = System.currentTimeMillis() - start;
