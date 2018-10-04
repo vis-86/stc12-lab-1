@@ -1,3 +1,3 @@
-Поиск предложений по словам в файлах или по адресу урл.
+Search for sentences by words in files or by url.
 
-Результат поиска сохраняется в указанный файл
+The search result is saved to the specified file.
