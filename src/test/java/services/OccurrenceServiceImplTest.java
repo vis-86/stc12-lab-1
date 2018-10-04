@@ -10,22 +10,19 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 class OccurrenceServiceImplTest {
 
   private OccurrenceService occurrenceService;
   private SentenceApplyService applyServiceMock;
-  private ExecutorService executorServiceMock;
 
   private String res;
 
   @BeforeEach
   void setUp() {
     applyServiceMock = Mockito.mock(SentenceApplyService.class);
-    executorServiceMock = Executors.newFixedThreadPool(1);
-    occurrenceService = new OccurrenceServiceImpl(applyServiceMock, executorServiceMock);
+    occurrenceService = new OccurrenceServiceImpl(applyServiceMock, Executors.newFixedThreadPool(1));
     res = "test/result/result.txt";
   }
 
@@ -44,30 +41,31 @@ class OccurrenceServiceImplTest {
 
     Assertions.assertTrue(file.exists(), res + " not found");
 
-    BufferedReader reader = new BufferedReader(new FileReader(file));
     StringBuilder content = new StringBuilder();
     String line;
-    while ((line = reader.readLine()) != null) {
-      content.append(line);
+    try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+      while ((line = reader.readLine()) != null) {
+        content.append(line);
+      }
     }
     Assertions.assertEquals(text + text, content.toString(), "incorrect result");
   }
 
   @Test
   void testWrongParams() {
-    Assertions.assertThrows(OccurrenceServiceException.class, () -> {
-      occurrenceService.getOccurrences(
-          null,
-          null,
-          res
-      );
-    });
-    Assertions.assertThrows(OccurrenceServiceException.class, () -> {
-      occurrenceService.getOccurrences(
-          new String[]{},
-          null,
-          res
-      );
-    });
+    Assertions.assertThrows(OccurrenceServiceException.class, () ->
+        occurrenceService.getOccurrences(
+            null,
+            null,
+            res
+        )
+    );
+    Assertions.assertThrows(OccurrenceServiceException.class, () ->
+        occurrenceService.getOccurrences(
+            new String[]{},
+            null,
+            res
+        )
+    );
   }
 }

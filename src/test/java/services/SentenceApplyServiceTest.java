@@ -23,10 +23,7 @@ class SentenceApplyServiceTest {
   }
 
   @Test
-  void testCorrectResult() throws Exception {
-    if (resource == null) {
-      throw new Exception("Can not find resource");
-    }
+  void testCorrectResult() {
     String result = sentenceApplyService.apply(resource.getPath(), new String[]{"malorum", "sit"});
     Assertions.assertNotNull(result, "result is null");
     Assertions.assertTrue(result.length() > 0, "empty result");
@@ -34,18 +31,12 @@ class SentenceApplyServiceTest {
 
   @Test
   void testEmptyResult() throws Exception {
-    if (resource == null) {
-      throw new Exception("Can not find resource");
-    }
     String empty = sentenceApplyService.apply(resource.getPath(), new String[]{});
     Assertions.assertEquals(0, empty.length());
   }
 
   @Test
   void testNullParams() throws Exception {
-    if (resource == null) {
-      throw new Exception("Can not find resource");
-    }
     Assertions.assertThrows(IllegalArgumentException.class,
         () -> sentenceApplyService.apply(null, new String[]{}));
   }
